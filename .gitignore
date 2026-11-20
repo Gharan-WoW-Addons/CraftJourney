@@ -1,0 +1,21 @@
+# macOS
+.DS_Store
+
+# VS Code: share the Lua language server settings and recommended extensions only
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Project-local Lua toolchain (Lua 5.1, busted, luacheck installed with LuaRocks)
+lua_modules/
+.luarocks/
+
+# Test coverage
+luacov.stats.out
+luacov.report.out
+
+# BigWigs Packager build output
+.release/
+
+# Logs
+*.log
