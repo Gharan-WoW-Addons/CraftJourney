@@ -9,18 +9,18 @@ body:
         Please check the [existing issues](https://github.com/Gharan-WoW-Addons/CraftJourney/issues) first, it may already be planned.
 
   - type: textarea
-    id: problem
+    id: use-case
     attributes:
-      label: Problem
-      description: What need or annoyance would this feature solve?
-      placeholder: e.g. When my priest crafts bags, I can't see on my warrior how much wool is still missing.
+      label: Use case
+      description: What do you want to do, and what is missing today?
+      placeholder: e.g. As a player with several characters, I want to see on my warrior how much wool my priest still needs, so that I know what to farm.
     validations:
       required: true
 
   - type: textarea
-    id: solution
+    id: proposed-feature
     attributes:
-      label: Proposed solution
+      label: Proposed feature
       description: What would you like the addon to do?
     validations:
       required: true
