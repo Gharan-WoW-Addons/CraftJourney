@@ -29,7 +29,7 @@ Not released yet. It will be published on CurseForge, Wago and WoWInterface.
 
 ## Contributing
 
-Bug reports, ideas, translations and fixes are welcome. A contributing guide is on the way.
+Bug reports, ideas, translations and fixes are welcome. Read the [contributing guide](CONTRIBUTING.md) to get started.
 
 ## License
 

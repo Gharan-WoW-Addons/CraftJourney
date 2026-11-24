@@ -29,7 +29,7 @@ Pas encore publié. L'addon sera disponible sur CurseForge, Wago et WoWInterface
 
 ## Contribuer
 
-Signalements de bugs, idées, traductions et corrections sont les bienvenus. Un guide de contribution arrive bientôt.
+Signalements de bugs, idées, traductions et corrections sont les bienvenus. Lisez le [guide de contribution](CONTRIBUTING.fr.md) pour commencer.
 
 ## Licence
 
