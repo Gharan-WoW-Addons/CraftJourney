@@ -1,4 +1,5 @@
 <!--
+Please read CONTRIBUTING.md first.
 PR title: follow Conventional Commits, it becomes the squashed commit on `develop`.
 Examples: `feat: track orders across characters`, `fix: wrong wool count for bags`
 -->
