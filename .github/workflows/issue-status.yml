@@ -1,0 +1,62 @@
+# Moves issues through the workflow using GitHub's native issue statuses
+# (synced with the project board):
+#   `accepted` label added -> Todo (and `needs-triage` removed)
+#   assignee added         -> In progress
+# Other transitions are native: PR opened / ready for review -> In review,
+# PR merged / issue closed -> Done.
+#
+# Issue statuses are in public preview: payloads may change.
+# Docs: https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/issue-status-webhooks-and-workflows
+
+name: Issue status
+
+on:
+  issues:
+    types: [labeled, assigned]
+
+permissions:
+  issues: write
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  GH_REPO: ${{ github.repository }}
+  ISSUE_ID: ${{ github.event.issue.node_id }}
+  # Status node IDs of this repository (statuses must be matched by ID, not by name).
+  # List them with:
+  #   gh api graphql -f query='{repository(owner:"Gharan-WoW-Addons",name:"CraftJourney"){planningStatuses(first:20){nodes{id name}}}}'
+  STATUS_TODO: IS_kgAD
+  STATUS_IN_PROGRESS: IS_kgAE
+  SET_STATUS: >-
+    mutation($issue: ID!, $status: ID!) {
+      setIssueStatus(input: {issueId: $issue, statusId: $status}) { clientMutationId }
+    }
+
+jobs:
+  accepted:
+    name: Accepted -> Todo
+    # Only from Backlog (or no status): never move an issue back.
+    if: >-
+      github.event.action == 'labeled'
+      && github.event.label.name == 'accepted'
+      && (github.event.issue.status == null || github.event.issue.status.category == 'backlog')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set status to Todo
+        run: gh api graphql -f query="$SET_STATUS" -f issue="$ISSUE_ID" -f status="$STATUS_TODO"
+
+      - name: Remove needs-triage label
+        if: contains(github.event.issue.labels.*.name, 'needs-triage')
+        run: gh issue edit "${{ github.event.issue.number }}" --remove-label needs-triage
+
+  assigned:
+    name: Assigned -> In progress
+    # Only from Backlog or Todo: assigning someone on an issue in review must not move it back.
+    if: >-
+      github.event.action == 'assigned'
+      && (github.event.issue.status == null
+          || github.event.issue.status.category == 'backlog'
+          || github.event.issue.status.category == 'planned')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set status to In progress
+        run: gh api graphql -f query="$SET_STATUS" -f issue="$ISSUE_ID" -f status="$STATUS_IN_PROGRESS"
