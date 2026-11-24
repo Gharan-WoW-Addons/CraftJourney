@@ -1,0 +1,84 @@
+name: Bug report
+description: Something does not work as expected (wrong or missing translations included).
+type: Bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+        Please check the [existing issues](https://github.com/Gharan-WoW-Addons/CraftJourney/issues) first, it may already be known.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and short description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the tailoring window
+        2. Create an order for 4 Green Woolen Bags
+        3. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: What happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What should happen instead.
+    validations:
+      required: true
+
+  - type: input
+    id: addon-version
+    attributes:
+      label: Addon version
+      placeholder: e.g. 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: client-version
+    attributes:
+      label: Game client version
+      placeholder: e.g. 1.60.1
+    validations:
+      required: true
+
+  - type: dropdown
+    id: client-language
+    attributes:
+      label: Game client language
+      options:
+        - English
+        - French
+        - Other (please specify in the description)
+    validations:
+      required: true
+
+  - type: textarea
+    id: lua-error
+    attributes:
+      label: Lua error
+      description: If an error is displayed, paste it here. Lua errors can be shown in game with `/console scriptErrors 1`.
+      render: text
+
+  - type: textarea
+    id: other-addons
+    attributes:
+      label: Other addons enabled
+      description: List the other addons you use, in case of a conflict.

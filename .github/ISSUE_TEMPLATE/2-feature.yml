@@ -1,0 +1,38 @@
+name: Feature request
+description: Suggest a new feature or an improvement.
+type: Feature
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for your idea!
+        Please check the [existing issues](https://github.com/Gharan-WoW-Addons/CraftJourney/issues) first, it may already be planned.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What need or annoyance would this feature solve?
+      placeholder: e.g. When my priest crafts bags, I can't see on my warrior how much wool is still missing.
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What would you like the addon to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other solutions or workarounds you thought about, other addons doing it…
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, examples, anything else that helps.
