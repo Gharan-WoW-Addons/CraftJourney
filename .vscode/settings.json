@@ -1,0 +1,9 @@
+{
+  "[lua]": {
+    "editor.defaultFormatter": "JohnnyMorganz.stylua",
+    "editor.formatOnSave": true
+  },
+  "stylua.styluaPath": "lua_modules/bin/stylua",
+  "wowAPI.luals.configurationScope": "User",
+  "wowAPI.luals.defineKnownGlobals": false
+}
