@@ -1,0 +1,8 @@
+-- Busted configuration: https://lunarmodules.github.io/busted/#usage
+return {
+  default = {
+    ROOT = { "spec" },
+    pattern = "_spec",
+    coverage = true,
+  },
+}

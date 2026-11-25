@@ -58,6 +58,97 @@ The pull request title becomes the commit on `develop`, so it follows [Conventio
 
 Examples: `feat: track orders across characters`, `fix: wrong wool count for bags`.
 
+## Development tools
+
+Everything specific to the project lives in the project: Lua, its packages and the formatter are installed in `lua_modules/` (ignored by Git), nothing is installed globally except `pipx`.
+
+| Tool | Version | Role |
+| --- | --- | --- |
+| [Lua](https://www.lua.org/) | 5.1.5 | The version embedded in the game |
+| [LuaRocks](https://luarocks.org/) | 3.13.0 | Lua package manager |
+| [busted](https://lunarmodules.github.io/busted/) | 2.3.0 | Unit tests |
+| [LuaCov](https://lunarmodules.github.io/luacov/) | 0.17.0 | Test coverage |
+| [Luacheck](https://luacheck.readthedocs.io/) | 1.2.0 | Static analysis (undefined or unused variables, globals…) |
+| [StyLua](https://github.com/JohnnyMorganz/StyLua) | 2.6.0 | Code formatter |
+
+### Install
+
+Requirements: Git, Python 3, a C compiler (on macOS: `xcode-select --install`) and [pipx](https://pipx.pypa.io/) (on macOS: `brew install pipx`).
+
+From the repository root:
+
+```bash
+# Lua 5.1 (with its official bug fixes) and LuaRocks, isolated in lua_modules/
+pipx run hererocks==0.25.1 lua_modules -l5.1 --patch -r@v3.13.0
+
+# Activate the environment (like a Python venv), then install the tools
+source lua_modules/bin/activate
+luarocks install busted 2.3.0-1
+luarocks install luacov 0.17.0-1
+luarocks install luacheck 1.2.0-1
+
+# StyLua: binary of the GitHub release, in the same folder
+# (macOS Intel: stylua-macos-x86_64.zip, Linux: stylua-linux-x86_64.zip)
+curl -L -o /tmp/stylua.zip https://github.com/JohnnyMorganz/StyLua/releases/download/v2.6.0/stylua-macos-aarch64.zip
+unzip -o /tmp/stylua.zip -d lua_modules/bin && chmod +x lua_modules/bin/stylua
+```
+
+On Windows, [hererocks](https://github.com/luarocks/hererocks) needs MinGW or Visual Studio, the environment is activated with `lua_modules\bin\activate.bat` (or `activate.ps1`), and StyLua comes from `stylua-windows-x86_64.zip`.
+
+[hererocks](https://github.com/luarocks/hererocks) is run with `pipx run`: it is not installed, it is only needed to create `lua_modules/`.
+
+### Daily use
+
+```bash
+source lua_modules/bin/activate   # once per terminal; leave with deactivate-lua
+
+busted                            # tests, with coverage data
+luacov                            # coverage report in luacov.report.out
+luacheck .                        # static analysis
+stylua .                          # format the code (stylua --check . only checks)
+```
+
+Configuration files: `.busted`, `.luacov`, `.luacheckrc`, `stylua.toml`.
+
+### Tests
+
+Tests live in `spec/` and end with `_spec.lua`. They cover the domain, in pure Lua. To load an addon file the way the game does (with `local addonName, ns = ...`), use the test helper:
+
+```lua
+local Addon = require("spec.support.addon")
+
+local ns = Addon.load("Domain/Order.lua")
+```
+
+### VS Code
+
+Open the repository folder: VS Code suggests the recommended extensions (`.vscode/extensions.json`):
+
+- [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS): completion and errors in the editor.
+- [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api): documentation of the game API for LuaLS.
+- [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua): formats Lua files on save, with the StyLua of `lua_modules/`.
+
+The shared settings are in `.vscode/settings.json`. They tell the WoW API extension to write its LuaLS settings (Lua 5.1, game API annotations) in your **user** settings, not in the repository: they then apply to all your WoW addons, and `.vscode/settings.json` stays clean whatever way you open the project.
+
+### In game
+
+Link the repository into the `Interface/AddOns/` folder of the game, so that the game loads your working copy:
+
+```bash
+# macOS (adapt the path to your installation)
+ln -s "$PWD" "/Applications/World of Warcraft/_forever_/Interface/AddOns/CraftJourney"
+```
+
+```bat
+:: Windows, in an administrator command prompt (adapt the paths)
+mklink /D "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" "C:\path\to\CraftJourney"
+```
+
+Then in game:
+
+- `/reload` reloads the interface after a change.
+- `/console scriptErrors 1` shows Lua errors.
+
 ## Software craftsmanship
 
 Craft Journey is a small addon, written with care. We value code that is easy to read, to test and to change, more than code that is clever.

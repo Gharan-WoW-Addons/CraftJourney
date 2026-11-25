@@ -1,0 +1,8 @@
+-- LuaCov configuration: https://lunarmodules.github.io/luacov/
+return {
+  -- Only measure the addon code, not the tests or the local toolchain.
+  exclude = {
+    "spec/",
+    "lua_modules/",
+  },
+}
