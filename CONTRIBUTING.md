@@ -58,6 +58,23 @@ The pull request title becomes the commit on `develop`, so it follows [Conventio
 
 Examples: `feat: track orders across characters`, `fix: wrong wool count for bags`.
 
+## Continuous integration
+
+Every pull request to `develop` or `main` runs these checks. They are all **required**: a single red check blocks the merge.
+
+| Check | What it verifies |
+| --- | --- |
+| `lint` | Luacheck and `stylua --check`: no warning, code formatted |
+| `test` | busted tests, with the coverage summary in the job summary |
+| `pr-title` | The title follows Conventional Commits (see above) |
+| `Analyze (actions)` | CodeQL security analysis of the GitHub Actions workflows |
+
+Run `luacheck .`, `stylua --check .` and `busted` locally before you push: the CI installs the same tools, at the same versions (pinned in `.github/workflows/ci.yml`: a version changes in both places).
+
+The branch must also be **up to date** with its base branch: what the CI tested is exactly what gets merged. If `develop` moved on since you opened your pull request, click **Update branch** on the pull request (or merge `develop` into your branch and push).
+
+After a merge into `develop`, only CodeQL runs again, to keep the *Security* tab up to date. Dependabot opens pull requests to update the GitHub Actions used by the workflows.
+
 ## Development tools
 
 Everything specific to the project lives in the project: Lua, its packages and the formatter are installed in `lua_modules/` (ignored by Git), nothing is installed globally except `pipx`.
@@ -148,6 +165,10 @@ Then in game:
 
 - `/reload` reloads the interface after a change.
 - `/console scriptErrors 1` shows Lua errors.
+
+## Security
+
+Found a vulnerability? Do **not** open a public issue: report it privately, as explained in [SECURITY.md](SECURITY.md).
 
 ## Software craftsmanship
 

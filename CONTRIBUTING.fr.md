@@ -60,6 +60,23 @@ Le titre de la pull request devient le commit sur `develop` : il suit donc [Conv
 
 Exemples : `feat: track orders across characters`, `fix: wrong wool count for bags`.
 
+## Intégration continue
+
+Chaque pull request vers `develop` ou `main` lance ces vérifications. Elles sont toutes **obligatoires** : une seule en rouge bloque la fusion.
+
+| Vérification | Ce qu'elle contrôle |
+| --- | --- |
+| `lint` | Luacheck et `stylua --check` : aucun avertissement, code formaté |
+| `test` | Tests busted, avec le résumé de couverture dans le résumé du job |
+| `pr-title` | Le titre suit Conventional Commits (voir plus haut) |
+| `Analyze (actions)` | Analyse de sécurité CodeQL des workflows GitHub Actions |
+
+Lancez `luacheck .`, `stylua --check .` et `busted` en local avant de pousser : la CI installe les mêmes outils, aux mêmes versions (figées dans `.github/workflows/ci.yml` : une version change aux deux endroits).
+
+La branche doit aussi être **à jour** avec sa branche cible : ce que la CI a testé est exactement ce qui est fusionné. Si `develop` a avancé depuis l'ouverture de votre pull request, cliquez sur **Update branch** dans la pull request (ou fusionnez `develop` dans votre branche et poussez).
+
+Après une fusion dans `develop`, seul CodeQL tourne à nouveau, pour garder l'onglet *Security* à jour. Dependabot ouvre des pull requests pour mettre à jour les GitHub Actions des workflows.
+
 ## Outils de développement
 
 Tout ce qui est propre au projet vit dans le projet : Lua, ses paquets et le formateur sont installés dans `lua_modules/` (ignoré par Git), rien n'est installé en global à part `pipx`.
@@ -150,6 +167,10 @@ Puis en jeu :
 
 - `/reload` recharge l'interface après une modification.
 - `/console scriptErrors 1` affiche les erreurs Lua.
+
+## Sécurité
+
+Vous avez trouvé une faille ? N'ouvrez **pas** d'issue publique : signalez-la en privé, comme expliqué dans [SECURITY.md](SECURITY.md) ([version française](SECURITY.fr.md)).
 
 ## Software craftsmanship
 
