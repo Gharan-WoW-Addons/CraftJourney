@@ -1,0 +1,94 @@
+# Lint and tests of every pull request to `develop` or `main`.
+# Both jobs are required checks (rulesets): a red job blocks the merge.
+# With "Require branches to be up to date before merging", what is tested here
+# is exactly what gets merged, so nothing runs again after the merge.
+
+name: CI
+
+on:
+  pull_request:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+# A new push to the pull request cancels the run still in progress.
+concurrency:
+  group: ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+# Same tools and versions as CONTRIBUTING.md (Development tools > Install):
+# update both together. No update tool supports LuaRocks.
+# --no-readline: the runner has no readline headers, only needed by the
+# interactive Lua prompt.
+env:
+  HEREROCKS_VERSION: "0.25.1"
+  LUAROCKS_TAG: "v3.13.0"
+  BUSTED_VERSION: "2.3.0-1"
+  LUACOV_VERSION: "0.17.0-1"
+  LUACHECK_VERSION: "1.2.0-1"
+  STYLUA_VERSION: "2.6.0"
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Restore the Lua toolchain
+        id: cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: lua_modules
+          key: lua-tools-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}
+
+      - name: Install the Lua toolchain
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch --no-readline -r@"$LUAROCKS_TAG"
+          lua_modules/bin/luarocks install luacheck "$LUACHECK_VERSION"
+          curl -fsSL -o /tmp/stylua.zip \
+            "https://github.com/JohnnyMorganz/StyLua/releases/download/v$STYLUA_VERSION/stylua-linux-x86_64.zip"
+          unzip -o -q /tmp/stylua.zip -d lua_modules/bin && chmod +x lua_modules/bin/stylua
+
+      - name: Luacheck
+        run: lua_modules/bin/luacheck .
+
+      - name: StyLua
+        run: lua_modules/bin/stylua --check .
+
+  test:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Restore the Lua toolchain
+        id: cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: lua_modules
+          key: lua-test-tools-${{ runner.os }}-${{ hashFiles('.github/workflows/ci.yml') }}
+
+      - name: Install the Lua toolchain
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch --no-readline -r@"$LUAROCKS_TAG"
+          lua_modules/bin/luarocks install busted "$BUSTED_VERSION"
+          lua_modules/bin/luarocks install luacov "$LUACOV_VERSION"
+
+      - name: Busted
+        run: lua_modules/bin/busted
+
+      - name: Coverage summary
+        run: |
+          lua_modules/bin/luacov
+          {
+            echo "## Test coverage"
+            echo '```'
+            sed -n '/^Summary/,$p' luacov.report.out
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

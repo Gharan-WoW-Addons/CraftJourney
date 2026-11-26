@@ -1,5 +1,6 @@
 # Craft Journey
 
+[![CI](https://github.com/Gharan-WoW-Addons/CraftJourney/actions/workflows/ci.yml/badge.svg?event=pull_request)](https://github.com/Gharan-WoW-Addons/CraftJourney/actions/workflows/ci.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 *[English version](README.md)*

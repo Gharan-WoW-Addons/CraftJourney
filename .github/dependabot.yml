@@ -1,0 +1,15 @@
+# Keeps the GitHub Actions of the workflows up to date (pinned by commit SHA).
+# The Lua tools are pinned in ci.yml and CONTRIBUTING.md: no update tool
+# supports LuaRocks, they are updated by hand.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    # PR titles like "ci: bump actions/checkout from x to y" (checked by pr-title)
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]

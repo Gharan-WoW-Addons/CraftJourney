@@ -1,0 +1,40 @@
+# Checks that the pull request title follows Conventional Commits: on `develop`,
+# the title becomes the squashed commit. Required check (rulesets).
+# Separate from ci.yml so that editing the title only runs this check.
+
+name: PR title
+
+on:
+  pull_request:
+    branches: [develop, main]
+    types: [opened, edited, synchronize, reopened]
+
+permissions: {}
+
+jobs:
+  pr-title:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check the title
+        env:
+          # Passed through the environment, never inlined in the script:
+          # a title is user input (script injection).
+          TITLE: ${{ github.event.pull_request.title }}
+          BASE: ${{ github.event.pull_request.base.ref }}
+        run: |
+          # <type>[(scope)][!]: <summary>, types of CONTRIBUTING.md (no chore),
+          # summary in lowercase.
+          conventional='^(feat|fix|docs|test|refactor|perf|build|ci)(\([a-z0-9-]+\))?!?: [a-z0-9`].*[^.]$'
+          # Release pull requests to main (see the versioning workflow).
+          release='^Release v[0-9]+\.[0-9]+\.[0-9]+$'
+
+          if [[ "$TITLE" =~ $conventional ]]; then
+            echo "Valid title: $TITLE"
+          elif [[ "$BASE" == "main" && "$TITLE" =~ $release ]]; then
+            echo "Valid release title: $TITLE"
+          else
+            echo "::error::Invalid pull request title: \"$TITLE\""
+            echo "Expected <type>: <summary>, for example \"feat: track orders across characters\"."
+            echo "Types: feat, fix, docs, test, refactor, perf, build, ci. See CONTRIBUTING.md."
+            exit 1
+          fi
