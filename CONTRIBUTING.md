@@ -144,21 +144,41 @@ Open the repository folder: VS Code suggests the recommended extensions (`.vscod
 - [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS): completion and errors in the editor.
 - [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api): documentation of the game API for LuaLS.
 - [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua): formats Lua files on save, with the StyLua of `lua_modules/`.
+- [Run on Save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave): copies the addon into the game on save (see *In game*).
 
 The shared settings are in `.vscode/settings.json`. They tell the WoW API extension to write its LuaLS settings (Lua 5.1, game API annotations) in your **user** settings, not in the repository: they then apply to all your WoW addons, and `.vscode/settings.json` stays clean whatever way you open the project.
 
 ### In game
 
-Link the repository into the `Interface/AddOns/` folder of the game, so that the game loads your working copy:
+Copy the addon into the `Interface/AddOns/` folder of the game with the sync script. It copies only the files the game needs, and removes from the game folder the files you deleted:
 
 ```bash
-# macOS (adapt the path to your installation)
-ln -s "$PWD" "/Applications/World of Warcraft/_forever_/Interface/AddOns/CraftJourney"
+# Adapt the path to your installation
+scripts/sync-to-game.sh "/Applications/World of Warcraft/_forever_/Interface/AddOns"
 ```
 
+Do not link the repository with a symbolic link: it breaks the game updates in Battle.net.
+
+To copy on every save, install the recommended **Run on Save** extension and add this block to your **user** settings (*Preferences: Open User Settings (JSON)*), with your own path. The extension reads its settings at the window level only, so this block does not work from `.vscode/settings.json` in a multi-root workspace.
+
+```json
+"emeraldwalk.runonsave": {
+  "commands": [
+    {
+      "match": "/CraftJourney/.*\\.(lua|toc)$",
+      "notMatch": "/CraftJourney/(spec|lua_modules)/",
+      "cmd": "\"${workspaceFolder}/scripts/sync-to-game.sh\" \"/Applications/World of Warcraft/_forever_/Interface/AddOns\""
+    }
+  ]
+}
+```
+
+Deleting a file does not trigger the copy: it is removed from the game folder at the next save, or when you run the script by hand.
+
+On Windows, run the same copy with `robocopy` (adapt the paths and add the exclusions of the script):
+
 ```bat
-:: Windows, in an administrator command prompt (adapt the paths)
-mklink /D "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" "C:\path\to\CraftJourney"
+robocopy "C:\path\to\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.*
 ```
 
 Then in game:

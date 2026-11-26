@@ -146,21 +146,41 @@ Ouvrez le dossier du dépôt : VS Code propose les extensions recommandées (`.v
 - [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS) : complétion et erreurs dans l'éditeur.
 - [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api) : documentation de l'API du jeu pour LuaLS.
 - [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) : formate les fichiers Lua à l'enregistrement, avec le StyLua de `lua_modules/`.
+- [Run on Save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) : copie l'addon dans le jeu à l'enregistrement (voir *En jeu*).
 
 Les réglages partagés sont dans `.vscode/settings.json`. Ils demandent à l'extension WoW API d'écrire ses réglages LuaLS (Lua 5.1, annotations de l'API du jeu) dans vos réglages **utilisateur**, pas dans le dépôt : ils s'appliquent alors à tous vos addons WoW, et `.vscode/settings.json` reste propre quelle que soit la façon d'ouvrir le projet.
 
 ### En jeu
 
-Liez le dépôt dans le dossier `Interface/AddOns/` du jeu, pour que le jeu charge votre copie de travail :
+Copiez l'addon dans le dossier `Interface/AddOns/` du jeu avec le script de synchronisation. Il ne copie que les fichiers utiles au jeu, et retire du dossier du jeu les fichiers que vous avez supprimés :
 
 ```bash
-# macOS (adaptez le chemin à votre installation)
-ln -s "$PWD" "/Applications/World of Warcraft/_forever_/Interface/AddOns/CraftJourney"
+# Adaptez le chemin à votre installation
+scripts/sync-to-game.sh "/Applications/World of Warcraft/_forever_/Interface/AddOns"
 ```
 
+Ne liez pas le dépôt par un lien symbolique : il casse les mises à jour du jeu dans Battle.net.
+
+Pour copier à chaque enregistrement, installez l'extension recommandée **Run on Save** et ajoutez ce bloc à vos réglages **utilisateur** (*Preferences: Open User Settings (JSON)*), avec votre propre chemin. L'extension ne lit ses réglages qu'au niveau de la fenêtre : ce bloc ne fonctionne donc pas depuis `.vscode/settings.json` dans un workspace multi-root.
+
+```json
+"emeraldwalk.runonsave": {
+  "commands": [
+    {
+      "match": "/CraftJourney/.*\\.(lua|toc)$",
+      "notMatch": "/CraftJourney/(spec|lua_modules)/",
+      "cmd": "\"${workspaceFolder}/scripts/sync-to-game.sh\" \"/Applications/World of Warcraft/_forever_/Interface/AddOns\""
+    }
+  ]
+}
+```
+
+Supprimer un fichier ne déclenche pas la copie : il disparaît du dossier du jeu au prochain enregistrement, ou en lançant le script à la main.
+
+Sous Windows, faites la même copie avec `robocopy` (adaptez les chemins et reprenez les exclusions du script) :
+
 ```bat
-:: Windows, dans une invite de commandes administrateur (adaptez les chemins)
-mklink /D "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" "C:\chemin\vers\CraftJourney"
+robocopy "C:\chemin\vers\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.*
 ```
 
 Puis en jeu :
