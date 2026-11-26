@@ -19,6 +19,8 @@ concurrency:
 
 # Same tools and versions as CONTRIBUTING.md (Development tools > Install):
 # update both together. No update tool supports LuaRocks.
+# --no-readline: the runner has no readline headers, only needed by the
+# interactive Lua prompt.
 env:
   HEREROCKS_VERSION: "0.25.1"
   LUAROCKS_TAG: "v3.13.0"
@@ -45,7 +47,7 @@ jobs:
       - name: Install the Lua toolchain
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch -r@"$LUAROCKS_TAG"
+          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch --no-readline -r@"$LUAROCKS_TAG"
           lua_modules/bin/luarocks install luacheck "$LUACHECK_VERSION"
           curl -fsSL -o /tmp/stylua.zip \
             "https://github.com/JohnnyMorganz/StyLua/releases/download/v$STYLUA_VERSION/stylua-linux-x86_64.zip"
@@ -74,7 +76,7 @@ jobs:
       - name: Install the Lua toolchain
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch -r@"$LUAROCKS_TAG"
+          pipx run "hererocks==$HEREROCKS_VERSION" lua_modules -l5.1 --patch --no-readline -r@"$LUAROCKS_TAG"
           lua_modules/bin/luarocks install busted "$BUSTED_VERSION"
           lua_modules/bin/luarocks install luacov "$LUACOV_VERSION"
 
