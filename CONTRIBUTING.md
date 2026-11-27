@@ -162,6 +162,7 @@ Open the repository folder: VS Code suggests the recommended extensions (`.vscod
 
 - [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS): completion and errors in the editor.
 - [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api): documentation of the game API for LuaLS.
+- [WoW TOC](https://marketplace.visualstudio.com/items?itemName=stanzilla.vscode-wow-toc): colors the `.toc` file (directives, comments, files).
 - [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua): formats Lua files on save, with the StyLua of `lua_modules/`.
 - [Run on Save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave): copies the addon into the game on save (see *In game*).
 

@@ -164,6 +164,7 @@ Ouvrez le dossier du dépôt : VS Code propose les extensions recommandées (`.v
 
 - [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS) : complétion et erreurs dans l'éditeur.
 - [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api) : documentation de l'API du jeu pour LuaLS.
+- [WoW TOC](https://marketplace.visualstudio.com/items?itemName=stanzilla.vscode-wow-toc) : colore le fichier `.toc` (directives, commentaires, fichiers).
 - [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua) : formate les fichiers Lua à l'enregistrement, avec le StyLua de `lua_modules/`.
 - [Run on Save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave) : copie l'addon dans le jeu à l'enregistrement (voir *En jeu*).
 
