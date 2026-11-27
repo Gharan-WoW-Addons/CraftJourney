@@ -3,12 +3,17 @@
 # the working copy. A symbolic link would be simpler, but it breaks the game
 # updates in Battle.net (issue #14).
 #
+# The working copy goes to its own "CraftJourney-dev" folder: the released
+# version keeps the "CraftJourney" folder, and both stay installed side by
+# side. Enable one of them at a time in the AddOns list of the game.
+#
 # Usage: scripts/sync-to-game.sh "<game folder>/_forever_/Interface/AddOns"
 #
 # Run it by hand, or on save with the Run on Save extension (see CONTRIBUTING.md).
 set -euo pipefail
 
 ADDON_NAME="CraftJourney"
+DEV_NAME="$ADDON_NAME-dev"
 
 addons_dir="${1:-}"
 addons_dir="${addons_dir%/}"
@@ -25,7 +30,7 @@ if [[ ! -d "$addons_dir" ]]; then
 fi
 
 repo_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-target="$addons_dir/$ADDON_NAME"
+target="$addons_dir/$DEV_NAME"
 
 # The game only loads a folder with its .toc file: without it, nothing to copy.
 if [[ ! -f "$repo_dir/$ADDON_NAME.toc" ]]; then
@@ -38,8 +43,11 @@ if [[ -L "$target" ]]; then
   exit 1
 fi
 
-# Everything the game does not need stays out of the AddOns folder.
+# Everything the game does not need stays out of the AddOns folder. The .toc
+# file is copied apart, under the name of the dev folder.
 rsync --recursive --times --delete \
+  --exclude="/$ADDON_NAME.toc" \
+  --exclude="/$DEV_NAME.toc" \
   --exclude='.*' \
   --exclude='._*' \
   --exclude='lua_modules/' \
@@ -52,11 +60,15 @@ rsync --recursive --times --delete \
   --exclude='luacov.*' \
   "$repo_dir/" "$target/"
 
+# The game only loads a .toc file named after its folder. The "(dev)" suffix
+# tells the two versions apart in the AddOns list.
+sed -E 's/^(## Title(-[A-Za-z]+)?:.*)$/\1 (dev)/' "$repo_dir/$ADDON_NAME.toc" >"$target/$DEV_NAME.toc"
+
 # macOS stores extended attributes as "._*" files on disks without native
 # support (exFAT, FAT32): remove them from the addon folder.
 if command -v dot_clean >/dev/null; then
   dot_clean -m "$target"
-  rm -f "$addons_dir/._$ADDON_NAME"
+  rm -f "$addons_dir/._$DEV_NAME"
 fi
 
 echo "Synced $ADDON_NAME to $target"

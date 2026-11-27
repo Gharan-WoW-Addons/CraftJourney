@@ -180,6 +180,8 @@ scripts/sync-to-game.sh "/Applications/World of Warcraft/_forever_/Interface/Add
 
 Ne liez pas le dépôt par un lien symbolique : il casse les mises à jour du jeu dans Battle.net.
 
+Le script copie la copie de travail dans son propre dossier `CraftJourney-dev`, avec son fichier `.toc` renommé `CraftJourney-dev.toc` (le jeu ne charge qu'un `.toc` qui porte le nom de son dossier) et *(dev)* ajouté à son titre. La version publiée, installée depuis CurseForge ou Wago, garde le dossier `CraftJourney` : les deux restent installées côte à côte, vous pouvez donc reproduire un bug sur la version publiée, puis le corriger sur la copie de travail. **N'activez qu'une des deux à la fois** dans la liste des AddOns du jeu : elles partagent les mêmes commandes et variables globales. Chacune garde ses propres données sauvegardées.
+
 Pour copier à chaque enregistrement, installez l'extension recommandée **Run on Save** et ajoutez ce bloc à vos réglages **utilisateur** (*Preferences: Open User Settings (JSON)*), avec votre propre chemin. L'extension ne lit ses réglages qu'au niveau de la fenêtre : ce bloc ne fonctionne donc pas depuis `.vscode/settings.json` dans un workspace multi-root.
 
 ```json
@@ -199,7 +201,8 @@ Supprimer un fichier ne déclenche pas la copie : il disparaît du dossier du je
 Sous Windows, faites la même copie avec `robocopy` (adaptez les chemins et reprenez les exclusions du script) :
 
 ```bat
-robocopy "C:\chemin\vers\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.*
+robocopy "C:\chemin\vers\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney-dev" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.* CraftJourney.toc CraftJourney-dev.toc
+copy "C:\chemin\vers\CraftJourney\CraftJourney.toc" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney-dev\CraftJourney-dev.toc"
 ```
 
 Puis en jeu :
