@@ -7,3 +7,8 @@
 ## Notes-frFR: Suivez vos commandes d'artisanat et les composants nécessaires.
 ## Author: GharanDev
 ## Version: 0.1.0-SNAPSHOT
+
+src\Locales\enUS.lua
+src\Locales\frFR.lua
+src\Domain\Message.lua
+src\Controller.lua
