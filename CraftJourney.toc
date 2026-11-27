@@ -1,0 +1,9 @@
+## Interface: 16001
+## AllowLoadGameType: forever
+## Title: Craft Journey
+## Category: Professions
+## Category-frFR: Métiers
+## Notes: Follow your crafting orders and the reagents they need.
+## Notes-frFR: Suivez vos commandes d'artisanat et les composants nécessaires.
+## Author: GharanDev
+## Version: 0.1.0-SNAPSHOT
