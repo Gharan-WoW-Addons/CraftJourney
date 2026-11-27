@@ -2,8 +2,8 @@ local _, ns = ...
 
 local Message = {}
 
-function Message.welcome(version)
-  local template = "Craft Journey %s loaded."
+function Message.welcome(L, version)
+  local template = L.WELCOME_MESSAGE
   local message = string.format(template, version)
 
   return message
