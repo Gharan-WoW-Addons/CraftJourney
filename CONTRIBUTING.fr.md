@@ -20,13 +20,32 @@ Les formulaires d'issue sont en anglais, mais vous pouvez les remplir en frança
 | Étape | Statut | Comment |
 | --- | --- | --- |
 | Nouvelle issue | Backlog | Label `needs-triage` posé par les formulaires |
-| Affinage | Backlog | Les mainteneurs précisent le périmètre et les critères d'acceptation |
+| Affinage | Backlog | Les mainteneurs précisent le périmètre et les critères d'acceptation. Pour un bug, ils vérifient seulement qu'il est complet (étapes de reproduction, versions, logs) et que ce n'est pas un doublon. Un bug **Urgent** saute l'affinage |
 | Acceptée | Todo | Label `accepted` : l'issue est prête à être réalisée |
 | Démarrée | In progress | Quelqu'un est assigné : il travaille dessus |
 | Pull request | In review | Une pull request liée à l'issue est prête pour la relecture |
 | Fusionnée | Done | La pull request ferme l'issue |
 
 Le statut change automatiquement. **Attendez le label `accepted` avant de coder**, et laissez un commentaire sur l'issue pour qu'un mainteneur vous l'assigne. Ainsi, personne ne travaille sur quelque chose qui ne sera pas fusionné, et deux personnes ne travaillent jamais sur la même issue.
+
+### Priorité et effort
+
+Chaque issue reçoit une priorité et un effort pendant l'affinage. Ils indiquent quand elle sera réalisée.
+
+| Priorité | Bug | Feature / Task |
+| --- | --- | --- |
+| Urgent | Casse une version publiée ou faille de sécurité : pris tout de suite, sans affinage, hotfix depuis `main` | Non utilisée |
+| High | Bug en jeu gênant : corrigé après la feature en cours, dans une version de patch (hotfix) | Bloque d'autres issues du milestone : prise en premier |
+| Medium | Gênant, sans version publiée touchée (outillage, développement) : corrigé dans le milestone en cours | Cœur du milestone |
+| Low | Pas gênant : corrigé dans un milestone à venir | Optionnelle : sort du milestone si le temps manque |
+
+L'effort est relatif à la complexité, pas un nombre d'heures :
+
+| Effort | Signification |
+| --- | --- |
+| Low | Changement simple et connu, peu de fichiers, aucune inconnue |
+| Medium | Plusieurs fichiers ou parties, ou une inconnue à lever |
+| High | Beaucoup d'inconnues ou gros morceau : à découper si possible |
 
 ## Workflow Git
 

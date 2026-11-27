@@ -18,13 +18,32 @@ Please search the [existing issues](https://github.com/Gharan-WoW-Addons/CraftJo
 | Step | Status | How |
 | --- | --- | --- |
 | New issue | Backlog | Labeled `needs-triage` by the issue forms |
-| Refinement | Backlog | Maintainers clarify the scope and the acceptance criteria |
+| Refinement | Backlog | Maintainers clarify the scope and the acceptance criteria. For a bug, they only check that it is complete (steps to reproduce, versions, logs) and not a duplicate. An **Urgent** bug skips refinement |
 | Accepted | Todo | Label `accepted`: the issue is ready to be worked on |
 | Started | In progress | Someone is assigned: they work on it |
 | Pull request | In review | A pull request linked to the issue is ready for review |
 | Merged | Done | The issue is closed by the pull request |
 
 The status changes automatically. **Wait for the `accepted` label before you start coding**, and leave a comment on the issue so that a maintainer can assign it to you. This way nobody works on something that will not be merged, and two people never work on the same issue.
+
+### Priority and effort
+
+Each issue gets a priority and an effort during refinement. They tell you when it will be worked on.
+
+| Priority | Bug | Feature / Task |
+| --- | --- | --- |
+| Urgent | Breaks a released version or is a security flaw: taken at once, without refinement, hotfix from `main` | Not used |
+| High | Annoying bug in game: fixed after the feature in progress, in a patch version (hotfix) | Blocks other issues of the milestone: taken first |
+| Medium | Annoying, but no released version is affected (tooling, development): fixed in the current milestone | Core of the milestone |
+| Low | Not annoying: fixed in a later milestone | Optional: moved out of the milestone if time runs short |
+
+The effort is relative to the complexity, not a number of hours:
+
+| Effort | Meaning |
+| --- | --- |
+| Low | Simple and known change, few files, no unknowns |
+| Medium | Several files or parts, or one unknown to clear up |
+| High | Many unknowns or a big piece of work: split it if possible |
 
 ## Git workflow
 
