@@ -153,7 +153,7 @@ Tests live in `spec/` and end with `_spec.lua`. They cover the domain, in pure L
 ```lua
 local Addon = require("spec.support.addon")
 
-local ns = Addon.load("Domain/Order.lua")
+local ns = Addon.load("src/Domain/Order.lua")
 ```
 
 ### VS Code
@@ -162,6 +162,7 @@ Open the repository folder: VS Code suggests the recommended extensions (`.vscod
 
 - [Lua](https://marketplace.visualstudio.com/items?itemName=sumneko.lua) (LuaLS): completion and errors in the editor.
 - [WoW API](https://marketplace.visualstudio.com/items?itemName=ketho.wow-api): documentation of the game API for LuaLS.
+- [WoW TOC](https://marketplace.visualstudio.com/items?itemName=stanzilla.vscode-wow-toc): colors the `.toc` file (directives, comments, files).
 - [StyLua](https://marketplace.visualstudio.com/items?itemName=JohnnyMorganz.stylua): formats Lua files on save, with the StyLua of `lua_modules/`.
 - [Run on Save](https://marketplace.visualstudio.com/items?itemName=emeraldwalk.RunOnSave): copies the addon into the game on save (see *In game*).
 
@@ -177,6 +178,8 @@ scripts/sync-to-game.sh "/Applications/World of Warcraft/_forever_/Interface/Add
 ```
 
 Do not link the repository with a symbolic link: it breaks the game updates in Battle.net.
+
+The script copies the working copy into its own `CraftJourney-dev` folder, with its `.toc` file renamed `CraftJourney-dev.toc` (the game only loads a `.toc` file named after its folder) and *(dev)* added to its title. The released version, installed from CurseForge or Wago, keeps the `CraftJourney` folder: both stay installed side by side, so you can reproduce a bug on the released version, then fix it on the working copy. **Enable only one of them at a time** in the AddOns list of the game: they share the same commands and global variables. Each one keeps its own saved variables.
 
 To copy on every save, install the recommended **Run on Save** extension and add this block to your **user** settings (*Preferences: Open User Settings (JSON)*), with your own path. The extension reads its settings at the window level only, so this block does not work from `.vscode/settings.json` in a multi-root workspace.
 
@@ -197,7 +200,8 @@ Deleting a file does not trigger the copy: it is removed from the game folder at
 On Windows, run the same copy with `robocopy` (adapt the paths and add the exclusions of the script):
 
 ```bat
-robocopy "C:\path\to\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.*
+robocopy "C:\path\to\CraftJourney" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney-dev" /MIR /XD .git .github .vscode lua_modules spec docs scripts /XF *.md LICENSE stylua.toml luacov.* CraftJourney.toc CraftJourney-dev.toc
+copy "C:\path\to\CraftJourney\CraftJourney.toc" "C:\Program Files (x86)\World of Warcraft\_forever_\Interface\AddOns\CraftJourney-dev\CraftJourney-dev.toc"
 ```
 
 Then in game:
@@ -258,7 +262,7 @@ Lua has no classes or interfaces, but the principles still apply:
 Example: the domain receives the stock through a constructor, so tests can inject a fake.
 
 ```lua
--- Domain/Order.lua (pure Lua)
+-- src/Domain/Order.lua (pure Lua)
 local _, ns = ...
 
 local Order = {}
@@ -299,7 +303,7 @@ WoW shares one global environment between all addons. Every file starts with:
 local addonName, ns = ...
 ```
 
-and shares its modules through the `ns` namespace table, never through globals.
+Most files do not need the addon name: they write `local _, ns = ...` instead (`_` receives a value that is not used, and luacheck reports any other unused variable). Each file then shares its modules through the `ns` namespace table, never through globals.
 
 ## Conventions
 

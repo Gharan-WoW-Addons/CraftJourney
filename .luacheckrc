@@ -13,5 +13,9 @@ files["spec/"] = {
   std = "+busted",
 }
 
--- WoW API globals are declared here as the addon starts using them, e.g.:
--- read_globals = { "CreateFrame" }
+-- WoW API globals used by the addon (read only).
+read_globals = {
+  "C_AddOns",
+  "CreateFrame",
+  "GetLocale",
+}
