@@ -153,7 +153,7 @@ Tests live in `spec/` and end with `_spec.lua`. They cover the domain, in pure L
 ```lua
 local Addon = require("spec.support.addon")
 
-local ns = Addon.load("Domain/Order.lua")
+local ns = Addon.load("src/Domain/Order.lua")
 ```
 
 ### VS Code
@@ -262,7 +262,7 @@ Lua has no classes or interfaces, but the principles still apply:
 Example: the domain receives the stock through a constructor, so tests can inject a fake.
 
 ```lua
--- Domain/Order.lua (pure Lua)
+-- src/Domain/Order.lua (pure Lua)
 local _, ns = ...
 
 local Order = {}
@@ -303,7 +303,7 @@ WoW shares one global environment between all addons. Every file starts with:
 local addonName, ns = ...
 ```
 
-and shares its modules through the `ns` namespace table, never through globals.
+Most files do not need the addon name: they write `local _, ns = ...` instead (`_` receives a value that is not used, and luacheck reports any other unused variable). Each file then shares its modules through the `ns` namespace table, never through globals.
 
 ## Conventions
 
